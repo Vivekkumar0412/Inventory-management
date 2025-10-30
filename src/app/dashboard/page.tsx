@@ -32,7 +32,32 @@ export default async function DashboardPage() {
     (a, prod) => a + Number(prod.price) * Number(prod.quantity),
     0
   );
-  console.log(totalValue, "total");
+  // console.log(totalValue, "total");
+  const now = new Date();
+  const weeklyProductData = [];
+  for(let i = 11; i>= 0; i--){
+    const weekStart = new Date(now)
+    weekStart.setDate(weekStart.getDate() - i*7)
+    weekStart.setHours(0,0,0,0);
+
+    const weekEnd = new Date(weekStart)
+    weekEnd.setDate(weekEnd.getDate() + 6)
+    weekStart.setHours(23,59,59,999);
+
+    const weekLabel = `${String(weekStart.getMonth() + 1 ).padStart(2,"0")}/${String(weekStart.getDate() + 1 ).padStart(2,"0")}`;
+
+    const weekProducts = allProducts.filter((prod)=>{
+      const productDate = new Date(prod.createdAt);
+      return productDate >= weekStart && productDate<= weekEnd
+    })
+
+    weeklyProductData.push({
+      week : weekLabel,
+      products : weekProducts.length
+    })
+  }
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar currentPath="/dashboard" />
@@ -102,7 +127,7 @@ export default async function DashboardPage() {
               <h2>New products per week</h2>
             </div>
             <div className="h-48">
-              <ProductsChart/>
+              <ProductsChart data={weeklyProductData}/>
             </div>
           </div>
         </div>
@@ -133,6 +158,17 @@ export default async function DashboardPage() {
             </div>
           </div>
         </div>
+        {/* effeciency section */}
+        {/* <div className="bg-white border-lg border border-gray-200">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-900">Efficiency</h2>
+              </div>
+              <div className="flex items-center justify-center">
+                <div className="relative w-48 h-48">
+                  
+                </div>
+              </div>
+        </div> */}
       </main>
     </div>
   );
